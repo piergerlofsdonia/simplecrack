@@ -6,6 +6,7 @@
 #include <crypt.h>
 #include <pthread.h>
 #define N_THREADS 40
+
 /*
  * Concurrent (multi-threaded) version of crypt_example.c, a wordlist-lookup password cracker for 
     UNIX systems. 
@@ -27,7 +28,6 @@ typedef struct {
 } data;
 
 pthread_mutex_t access_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t init_mutex;       
 bool cracked = false;
 
 void getEntry(char *username, char* return_string, int buffer_size) {
@@ -166,7 +166,8 @@ void crackPassword(char* salt, char* hash) {
                 responses[t] = pthread_create(&threads[t], NULL, checkHashes, thread_arguments);
                 if ( responses[t] != 0 ) free(thread_arguments);
             }
-            
+            // TODO: Implement fix for edge-case issue where password is in the last remaining lines of wordlist.txt.
+		
             for ( int t = 0 ; t < N_THREADS; t++ ) {
                if ( responses[t] == 0 ) {
                    pthread_join(threads[t], NULL); // Await thread, do this before starting to re-allocate and re-fill the buffer.
