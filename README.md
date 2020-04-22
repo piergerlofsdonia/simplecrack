@@ -13,4 +13,4 @@ This is a super simple unix password cracker developed in a day after initally r
 5. (Optional) Run a timed comparison between "crypt\_example" and "crypt\_example\_concurrent" using `date && sudo ./crypt <username> >/dev/null && date`
 
 ## Known Issues:
-* The concurrent version has the potential to break if a password is in the last entries of the wordlist and the number of threads is greater than the number of lines remaining in the wordlist (_Added a TODO to fix this). 
+* The concurrent version has the potential to break if a password is in the last entries of the wordlist and the number of threads is greater than the number of lines remaining in the wordlist (_Added a TODO to fix this_). 
