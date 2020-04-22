@@ -22,30 +22,30 @@ void getEntry(char *username, char* return_string, int buffer_size) {
      * If a line has a prefix that matches the input username, store that in the 
         return_string buffer.
      */
-    int cmp_len = strlen(username);
-    char* cmp_buff = malloc(cmp_len); // Buffer in which to store 'comparative' string.
+    	int cmp_len = strlen(username);
+    	char* cmp_buff = malloc(cmp_len); // Buffer in which to store 'comparative' string.
 	FILE *file_pointer; // Initalise file and line pointers.
 	char *line_pointer = NULL;
-    size_t buff_len = 0;
+	size_t buff_len = 0;
 
 	file_pointer = fopen("/etc/shadow", "r"); // Read in password hashes.
 	if ( file_pointer != NULL ) { // If the file_pointer is not set to a non-init value, an error occured.
         // Read a line of text from the file. 
-	    while(getline(&line_pointer, &buff_len, file_pointer) != -1) { // Read line-by-line until output is == -1.
-            strncpy(cmp_buff, line_pointer, cmp_len); // Copy first n bytes into comparative.
-            if ( strcmp(cmp_buff, username) == 0 ) { // If they match ... 
-                strncpy(return_string, line_pointer+cmp_len+1, buffer_size-1); // Copy entire line to input buff.
-            }
-        }
-    } else {
-        printf("Could not read file!\n");
-        exit(NULL); // Exit and notify the user.
+		while(getline(&line_pointer, &buff_len, file_pointer) != -1) { // Read line-by-line until output is == -1.
+            		strncpy(cmp_buff, line_pointer, cmp_len); // Copy first n bytes into comparative.
+            		if ( strcmp(cmp_buff, username) == 0 ) { // If they match ... 
+                		strncpy(return_string, line_pointer+cmp_len+1, buffer_size-1); // Copy entire line to input buff.
+			}
+	    	}
+    	} else {
+        	printf("Could not read file!\n");
+        	exit(NULL); // Exit and notify the user.
 	}
 
-    return_string[buffer_size-1] = "\0"; // Add terminating byte.
-    fclose(file_pointer);
-    free(line_pointer); // Unallocate memory.
-    return;
+    	return_string[buffer_size-1] = "\0"; // Add terminating byte.
+    	fclose(file_pointer);
+    	free(line_pointer); // Unallocate memory.
+    	return;
 }
 
 void parseHashString(char* hash, char* salt, int salt_len) {
@@ -55,6 +55,7 @@ void parseHashString(char* hash, char* salt, int salt_len) {
         so we're electing to discard them. The "hash code" (a single digit detailing which cryptographic method was used) 
         and salt string are split from the initial string and stored into the same buffer in their original format '$<hashcode>$<salt>.
      */
+	
     printf("Parsing hash string %s\n", hash); 
     int i = 0;
     int hash_len = strlen(hash);
@@ -120,8 +121,7 @@ void *decrypt_string(char *cracked_buff, char *comp_hash, char *salt) {
                 cracked_buff[line_len+1] = '\0'; // Add null byte. 
                 return; 
             } else {
-                printf("Not a match: %s\n", line_pointer); // Print non-matches.
-                exit(NULL);
+                printf("Not a match: %s\n", line_pointer); // Print non-matches
             }
          } 
     } else {
@@ -131,13 +131,16 @@ void *decrypt_string(char *cracked_buff, char *comp_hash, char *salt) {
 }
 
 int main(int argc, char *argv[]) {    
-    if ( argc != 2 ) { printf("Incorrect number of command-line arguments provided, please provide a username from /etc/shadow to crack\n"); exit(NULL); }
+    if ( argc != 2 ) { 
+	    printf("Incorrect number of command-line arguments provided, please provide a username from /etc/shadow to crack\n"); 
+	    exit(NULL);
+    }
+    
     int arg_len = strlen(argv[1]); // Check input args then set username.
     static char username[33];
     strncpy(username, argv[1], arg_len);
     username[arg_len] = '\0';
-    printf("Pulling password hash for user: %s\n", username); 
-	char hash[255];
+    char hash[255];
     char salt[12];
     getEntry(username, hash, sizeof(hash)); // Get entry from /etc/shadow.
     parseHashString(hash, salt, sizeof(salt)); // Parse the hash string from above.
